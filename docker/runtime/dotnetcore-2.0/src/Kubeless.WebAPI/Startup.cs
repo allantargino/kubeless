@@ -9,24 +9,13 @@ using Kubeless.Core.Invokers;
 using System.IO;
 using Kubeless.Core.Handlers;
 
-namespace kubeless_netcore_runtime
+namespace Kubeless.WebAPI
 {
     public class Startup
     {
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
-
-            if (env.IsDevelopment())
-            {
-                //Set fixed enviroment variables for example function:
-                Environment.SetEnvironmentVariable("MOD_NAME", "hellowithdata");
-                Environment.SetEnvironmentVariable("FUNC_HANDLER", "handler");
-                Environment.SetEnvironmentVariable("FUNC_TIMEOUT", "180");
-                Environment.SetEnvironmentVariable("FUNC_PORT", "8080");
-                Environment.SetEnvironmentVariable("FUNC_RUNTIME", "dotnetcore2.0");
-                Environment.SetEnvironmentVariable("FUNC_MEMORY_LIMIT", "0");
-            }
         }
 
         public IConfiguration Configuration { get; }
@@ -42,9 +31,9 @@ namespace kubeless_netcore_runtime
 
             services.AddSingleton<IFunction>(function);
 
-            int timeout = int.Parse(VariablesUtils.GetEnvironmentVariable("FUNC_TIMEOUT", "180"));
+            int timeout = int.Parse(Configuration["FUNC_TIMEOUT"]) * 1000; // seconds
 
-            services.AddSingleton<IInvoker>(new CompiledFunctionInvoker(timeout * 1000)); // seconds
+            services.AddSingleton<IInvoker>(new CompiledFunctionInvoker(timeout));
             services.AddSingleton<IParameterHandler>(new DefaultParameterHandler());
         }
 
@@ -56,11 +45,7 @@ namespace kubeless_netcore_runtime
             }
 
             app.UseCors(builder =>
-                builder.
-                AllowAnyHeader().
-                AllowAnyOrigin().
-                AllowAnyMethod()
-                );
+                builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
             app.UseMvc();
         }

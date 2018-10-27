@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Kubeless.Functions;
 
-public class helloget
+public class module
 {
     public string handler(Event k8Event, Context k8Context)
     {
-        return "hello world";
+        return "Hello from Kubeless.Functions!";
     }
 }

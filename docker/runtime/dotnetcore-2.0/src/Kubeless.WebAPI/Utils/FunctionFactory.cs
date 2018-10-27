@@ -9,17 +9,17 @@ namespace Kubeless.WebAPI.Utils
     {
         public static IFunctionSettings BuildFunctionSettings(IConfiguration configuration)
         {
-            var moduleName = Environment.GetEnvironmentVariable("MOD_NAME");
+            var moduleName = configuration["MOD_NAME"];
             if (string.IsNullOrEmpty(moduleName))
                 throw new ArgumentNullException("MOD_NAME");
 
-            var functionHandler = Environment.GetEnvironmentVariable("FUNC_HANDLER");
+            var functionHandler = configuration["FUNC_HANDLER"];
             if (string.IsNullOrEmpty(moduleName))
                 throw new ArgumentNullException("FUNC_HANDLER");
 
-            var assemblyPathConfiguration = configuration["Compiler:FunctionAssemblyPath"];
+            var assemblyPathConfiguration = configuration["FunctionAssemblyPath"];
             if (string.IsNullOrEmpty(assemblyPathConfiguration))
-                throw new ArgumentNullException("Compiler:FunctionAssemblyPath");
+                throw new ArgumentNullException("FunctionAssemblyPath");
             var assemblyPath = string.Concat(assemblyPathConfiguration, "project", ".dll");
             var assembly = new BinaryContent(assemblyPath);
 
