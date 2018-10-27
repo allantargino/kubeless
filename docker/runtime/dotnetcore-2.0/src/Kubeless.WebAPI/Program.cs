@@ -25,6 +25,12 @@ namespace kubeless_netcore_runtime
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseUrls($"http://*:{port}")
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole(options => options.IncludeScopes = true);
+                    logging.AddDebug();
+                })
                 .Build();
         }
     }
