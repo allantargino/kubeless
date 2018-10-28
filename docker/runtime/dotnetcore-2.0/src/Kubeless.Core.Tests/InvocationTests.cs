@@ -26,7 +26,7 @@ namespace Kubeless.Core.Tests
             var assemblyFile = environment.AssemblyFile;
 
             //var compiler = new DefaultCompiler(new DefaultParser(), new WithoutDependencyReferencesManager());
-            var function = FunctionCreator.CreateFunction(functionFile);
+            //var function = FunctionCreator.CreateFunction(functionFile);
 
             //compiler.Compile(function);
 
@@ -54,7 +54,6 @@ namespace Kubeless.Core.Tests
             restorer.CopyAndRestore();
 
             //var compiler = new DefaultCompiler(new DefaultParser(), new WithDependencyReferencesManager());
-            var function = FunctionCreator.CreateFunction(functionFile, projectFile);
 
             //compiler.Compile(function);
 
@@ -110,14 +109,14 @@ namespace Kubeless.Core.Tests
         private static object ExecuteCompiledFunction(IFunction function, int timeout = 180 * 1000)
         {
             // Invoke
-            var invoker = new CompiledFunctionInvoker(timeout);
+            var invoker = new CompiledFunctionInvoker(function, timeout, null);
 
             var cancellationSource = new CancellationTokenSource();
 
             var request = WebManager.GetHttpRequest();
             (Event _event, Context _context) = new DefaultParameterHandler().GetFunctionParameters(request);
 
-            return invoker.Execute(function, cancellationSource, _event, _context); 
+            return invoker.Execute(cancellationSource, _event, _context); 
         }
 
         private static IFunction GetCompiledFunctionWithDepedencies(string functionFileName)
@@ -135,10 +134,10 @@ namespace Kubeless.Core.Tests
 
             // Compile
             //var compiler = new DefaultCompiler(new DefaultParser(), new WithDependencyReferencesManager());
-            var function = FunctionCreator.CreateFunction(functionFile, projectFile);
+            //var function = FunctionCreator.CreateFunction(functionFile, projectFile);
             //compiler.Compile(function);
 
-            return function;
+            return null;
         }
 
     }

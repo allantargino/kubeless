@@ -11,16 +11,14 @@ namespace Kubeless.WebAPI.Controllers
     [Route("/")]
     public class RuntimeController : Controller
     {
-        private readonly IFunction function;
-        private readonly IParameterHandler parameterManager;
+        private readonly IParameterHandler parameterHandler;
         private readonly IInvoker invoker;
         private readonly ILogger logger;
 
-        public RuntimeController(IFunction function, IParameterHandler parameterManager, IInvoker invoker, ILogger<RuntimeController> logger)
+        public RuntimeController(IParameterHandler parameterHandler, IInvoker invoker, ILogger<RuntimeController> logger)
         {
-            this.function = function;
             this.invoker = invoker;
-            this.parameterManager = parameterManager;
+            this.parameterHandler = parameterHandler;
             this.logger = logger;
         }
 
@@ -31,11 +29,11 @@ namespace Kubeless.WebAPI.Controllers
 
             try
             {
-                (Event @event, Context context) = parameterManager.GetFunctionParameters(Request);
+                (Event @event, Context context) = parameterHandler.GetFunctionParameters(Request);
 
                 var cancellationSource = new CancellationTokenSource();
 
-                var output = invoker.Execute(function, cancellationSource, @event, context);
+                var output = invoker.Execute(cancellationSource, @event, context);
 
                 logger.LogInformation("{0}: Function Executed. HTTP response: {1}.", DateTime.Now.ToString(), 200);
                 return output;
@@ -54,6 +52,5 @@ namespace Kubeless.WebAPI.Controllers
 
         [HttpGet("/healthz")]
         public IActionResult Health() => Ok();
-
     }
 }

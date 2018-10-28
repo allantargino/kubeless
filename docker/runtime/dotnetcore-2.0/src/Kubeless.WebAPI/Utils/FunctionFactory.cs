@@ -7,29 +7,27 @@ namespace Kubeless.WebAPI.Utils
 {
     public class FunctionFactory
     {
-        public static IFunctionSettings BuildFunctionSettings(IConfiguration configuration)
+        public static IFunction GetFunction(IConfiguration configuration)
         {
-            var moduleName = configuration["MOD_NAME"];
-            if (string.IsNullOrEmpty(moduleName))
-                throw new ArgumentNullException("MOD_NAME");
+            var moduleName = configuration.GetNotNullConfiguration("MOD_NAME");
+            var functionHandler = configuration.GetNotNullConfiguration("FUNC_HANDLER");
+            var assemblyPathConfiguration = configuration.GetNotNullConfiguration("FunctionAssemblyPath");
 
-            var functionHandler = configuration["FUNC_HANDLER"];
-            if (string.IsNullOrEmpty(moduleName))
-                throw new ArgumentNullException("FUNC_HANDLER");
-
-            var assemblyPathConfiguration = configuration["FunctionAssemblyPath"];
-            if (string.IsNullOrEmpty(assemblyPathConfiguration))
-                throw new ArgumentNullException("FunctionAssemblyPath");
-            var assemblyPath = string.Concat(assemblyPathConfiguration, "project", ".dll");
-            var assembly = new BinaryContent(assemblyPath);
-
-            return new FunctionSettings(moduleName, functionHandler, assembly);
+            return new CompiledFunction(moduleName, functionHandler, assemblyPathConfiguration);
         }
 
-        public static IFunction BuildFunction(IConfiguration configuration)
+        public static int GetFunctionTimeout(IConfiguration configuration)
         {
-            var settings = BuildFunctionSettings(configuration);
-            return new Function(settings);
+            var timeout = configuration.GetNotNullConfiguration("FUNC_TIMEOUT");
+
+            return int.Parse(timeout) * 1000; // seconds
+        }
+
+        public static string GetFunctionReferencesPath(IConfiguration configuration)
+        {
+            var referencesPath = configuration.GetNotNullConfiguration("DOTNETCORE_HOME");
+
+            return referencesPath;
         }
     }
 }

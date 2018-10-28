@@ -24,25 +24,19 @@ namespace Kubeless.WebAPI
         {
             services.AddMvc();
 
-            var function = FunctionFactory.BuildFunction(Configuration);
+            var function = FunctionFactory.GetFunction(Configuration);
+            var timeout = FunctionFactory.GetFunctionTimeout(Configuration);
+            var referencesPath = FunctionFactory.GetFunctionReferencesPath(Configuration); 
 
-            if (!function.IsCompiled())
-                throw new FileNotFoundException(nameof(function.FunctionSettings.ModuleName));
+            services.AddSingleton<IInvoker>(new CompiledFunctionInvoker(function, timeout, referencesPath));
 
-            services.AddSingleton<IFunction>(function);
-
-            int timeout = int.Parse(Configuration["FUNC_TIMEOUT"]) * 1000; // seconds
-
-            services.AddSingleton<IInvoker>(new CompiledFunctionInvoker(timeout));
             services.AddSingleton<IParameterHandler>(new DefaultParameterHandler());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseCors(builder =>
                 builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
