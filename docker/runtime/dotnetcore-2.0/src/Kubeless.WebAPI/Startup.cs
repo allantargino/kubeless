@@ -30,7 +30,7 @@ namespace Kubeless.WebAPI
 
             services.AddSingleton<IInvoker>(new CompiledFunctionInvoker(function, timeout, referencesPath));
 
-            services.AddSingleton<IParameterHandler>(new DefaultParameterHandler());
+            services.AddSingleton<IParameterHandler>(new DefaultParameterHandler(Configuration));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

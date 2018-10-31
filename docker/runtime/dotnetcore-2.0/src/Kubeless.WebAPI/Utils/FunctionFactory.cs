@@ -11,16 +11,17 @@ namespace Kubeless.WebAPI.Utils
         {
             var moduleName = configuration.GetNotNullConfiguration("MOD_NAME");
             var functionHandler = configuration.GetNotNullConfiguration("FUNC_HANDLER");
-            var assemblyPathConfiguration = configuration.GetNotNullConfiguration("FunctionAssemblyPath");
+            var referencesPath = configuration.GetNotNullConfiguration("DOTNETCORE_HOME");
 
-            return new CompiledFunction(moduleName, functionHandler, assemblyPathConfiguration);
+            return new CompiledFunction(moduleName, functionHandler, referencesPath);
         }
 
         public static int GetFunctionTimeout(IConfiguration configuration)
         {
-            var timeout = configuration.GetNotNullConfiguration("FUNC_TIMEOUT");
+            var timeoutSeconds = configuration.GetNotNullConfiguration("FUNC_TIMEOUT");
+            var milisecondsInSecond = 1000;
 
-            return int.Parse(timeout) * 1000; // seconds
+            return int.Parse(timeoutSeconds) * milisecondsInSecond;
         }
 
         public static string GetFunctionReferencesPath(IConfiguration configuration)

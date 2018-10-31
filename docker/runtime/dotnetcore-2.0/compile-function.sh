@@ -2,15 +2,17 @@
 
 # kubeless function directory
 PROJECT_MOUNT=$1
+echo Mount $PROJECT_MOUNT
 
 # detect language
-if [ -s $PROJECT_MOUNT/*cs* ]; then
+if [[ -s $PROJECT_MOUNT/*cs* ]]; then
 	LANGUAGE=cs;
-elif [ -s $PROJECT_MOUNT/*fs* ]; then
+elif [[ -s $PROJECT_MOUNT/*fs* ]]; then
 	LANGUAGE=fs;
 else
 	LANGUAGE=vb;
 fi
+echo Language $LANGUAGE
 
 # set project files variables
 PACKAGES_DIR=$PROJECT_MOUNT/packages
@@ -25,5 +27,5 @@ else
 fi
 
 # compile
-dotnet restore $PROJECT_MOUNT --packages $PACKAGES_DIR
-dotnet publish $PROJECT_MOUNT -o publish -c Release --no-restore
+dotnet restore $USER_PROJ --packages $PACKAGES_DIR
+dotnet publish $USER_PROJ -o publish -c Release --no-restore

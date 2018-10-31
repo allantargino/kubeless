@@ -114,7 +114,7 @@ namespace Kubeless.Core.Tests
             var cancellationSource = new CancellationTokenSource();
 
             var request = WebManager.GetHttpRequest();
-            (Event _event, Context _context) = new DefaultParameterHandler().GetFunctionParameters(request);
+            (Event _event, Context _context) = new DefaultParameterHandler(null).GetFunctionParameters(request);
 
             return invoker.Execute(cancellationSource, _event, _context); 
         }
