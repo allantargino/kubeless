@@ -1,19 +1,23 @@
 ﻿using Kubeless.Core.Interfaces;
 using Kubeless.Core.Models;
 using Microsoft.Extensions.Configuration;
-using System;
+using System.IO;
 
 namespace Kubeless.WebAPI.Utils
 {
     public class FunctionFactory
     {
+        private const string PUBLISH_PATH = "publish/";
+        private const string PACKAGES_PATH = "packages/";
+
         public static IFunction GetFunction(IConfiguration configuration)
         {
             var moduleName = configuration.GetNotNullConfiguration("MOD_NAME");
             var functionHandler = configuration.GetNotNullConfiguration("FUNC_HANDLER");
-            var referencesPath = configuration.GetNotNullConfiguration("DOTNETCORE_HOME");
+            var basePath = "/kubeless/";
+            var publishPath = Path.Combine(basePath, PUBLISH_PATH);
 
-            return new CompiledFunction(moduleName, functionHandler, referencesPath);
+            return new CompiledFunction(moduleName, functionHandler, publishPath);
         }
 
         public static int GetFunctionTimeout(IConfiguration configuration)

@@ -27,6 +27,14 @@ namespace Kubeless.Core.Invokers
             LoadDependentAssemblies(referencesPath);
         }
 
+        private Type GetFunctionType(IFunction function)
+        {
+            var Assemblycontent = File.ReadAllBytes(function.FunctionFile);
+            var assembly = Assembly.Load(Assemblycontent);
+
+            return assembly.GetType(function.ModuleName);
+        }
+
         private void LoadDependentAssemblies(string referencesPath)
         {
             var invocationManager = new CustomReferencesManager();
@@ -34,14 +42,6 @@ namespace Kubeless.Core.Invokers
 
             foreach (var r in references)
                 Assembly.LoadFrom(r);
-        }
-
-        private Type GetFunctionType(IFunction function)
-        {
-            var Assemblycontent = File.ReadAllBytes(function.FunctionFile);
-            var assembly = Assembly.Load(Assemblycontent);
-
-            return assembly.GetType(function.ModuleName);
         }
 
         private object InvokeFunction(object[] parameters, Type type, object instance)
