@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Kubeless.Core\Kubeless.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\functions\**" CopyToOutputDirectory="PreserveNewest"  />
+  </ItemGroup>
+
 </Project>

@@ -7,15 +7,15 @@ namespace Kubeless.WebAPI.Utils
 {
     public class FunctionFactory
     {
-        private const string PUBLISH_PATH = "publish/";
-        private const string PACKAGES_PATH = "packages/";
+        private static readonly string BASE_PATH = VariablesUtils.GetEnvVar("BASE_PATH", "/kubeless/");
+        private static readonly string PUBLISH_PATH = "publish/";
+        private static readonly string PACKAGES_PATH = "packages/";
 
         public static IFunction GetFunction(IConfiguration configuration)
         {
             var moduleName = configuration.GetNotNullConfiguration("MOD_NAME");
             var functionHandler = configuration.GetNotNullConfiguration("FUNC_HANDLER");
-            var basePath = "/kubeless/";
-            var publishPath = Path.Combine(basePath, PUBLISH_PATH);
+            var publishPath = Path.Combine(BASE_PATH, PUBLISH_PATH);
 
             return new CompiledFunction(moduleName, functionHandler, publishPath);
         }
@@ -30,7 +30,7 @@ namespace Kubeless.WebAPI.Utils
 
         public static string GetFunctionReferencesPath(IConfiguration configuration)
         {
-            var referencesPath = configuration.GetNotNullConfiguration("DOTNETCORE_HOME");
+            var referencesPath = Path.Combine(BASE_PATH, PACKAGES_PATH);
 
             return referencesPath;
         }

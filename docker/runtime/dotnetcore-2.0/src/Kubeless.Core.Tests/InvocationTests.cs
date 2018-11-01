@@ -3,7 +3,9 @@ using Kubeless.Core.Interfaces;
 using Kubeless.Core.Invokers;
 using Kubeless.Core.Tests.Utils;
 using Kubeless.Functions;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.IO;
 using System.Threading;
 using Xunit;
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -12,30 +14,29 @@ namespace Kubeless.Core.Tests
 {
     public class InvocationTests
     {
-        private const string BASE_PATH = @".\Functions";
+        private const string BASE_PATH = "./Functions";
+        private const string PUBLISH_PATH = "publish/";
+        private const string PACKAGES_PATH = "packages/";
 
-
-        [InlineData("nodependency")]
+        [InlineData("cs", "nodependency", "module", "handler")]
         [Theory]
-        public void BuildWithoutDependency(string functionFileName)
+        public void BuildWithoutDependency(string language, string functionFileName, string moduleName, string functionHandler)
         {
-            // Compile
-            var environment = EnvironmentManager.CreateEnvironment(BASE_PATH, functionFileName);
+            // Arrange
+            int timeout = 180;
+            string packagesPath = Path.Combine(BASE_PATH, PACKAGES_PATH);
+            HttpRequest request = new DefaultHttpContext().Request;
+            FunctionFactory factory = new FunctionFactory(BASE_PATH);
+            IFunction function = factory.CompileFunction(language, functionFileName, moduleName, functionHandler);
+            IInvoker invoker = new CompiledFunctionInvoker(function, timeout, packagesPath);
+            Event @event = new Event();
+            Context context = new Context();
+            CancellationTokenSource token = new CancellationTokenSource();
 
-            var functionFile = environment.FunctionFile;
-            var assemblyFile = environment.AssemblyFile;
+            // Act
+            object result = invoker.Execute(token, @event, context);
 
-            //var compiler = new DefaultCompiler(new DefaultParser(), new WithoutDependencyReferencesManager());
-            //var function = FunctionCreator.CreateFunction(functionFile);
-
-            //compiler.Compile(function);
-
-            // Invoke
-            //var invoker = new CompiledFunctionInvoker();
-
-            //var args = WebManager.GetHttpRequest();
-
-            //object result = invoker.Execute(function, args);
+            // Assert
         }
 
         //[InlineData("dependency-json")] //TODO: Run both tests in parallel
@@ -43,15 +44,15 @@ namespace Kubeless.Core.Tests
         [Theory]
         public void BuildWithDependency(string functionFileName)
         {
-            // Compile
-            var environment = EnvironmentManager.CreateEnvironment(BASE_PATH, functionFileName);
+            //// Compile
+            //var environment = EnvironmentManager.CreateEnvironment(BASE_PATH, functionFileName);
 
-            var functionFile = environment.FunctionFile;
-            var projectFile = environment.ProjectFile;
-            var assemblyFile = environment.AssemblyFile;
+            //var functionFile = environment.FunctionFile;
+            //var projectFile = environment.ProjectFile;
+            //var assemblyFile = environment.AssemblyFile;
 
-            var restorer = new DependencyRestorer(environment);
-            restorer.CopyAndRestore();
+            //var restorer = new FunctionCompiler(environment);
+            //restorer.CopyAndRestore();
 
             //var compiler = new DefaultCompiler(new DefaultParser(), new WithDependencyReferencesManager());
 
@@ -108,29 +109,30 @@ namespace Kubeless.Core.Tests
 
         private static object ExecuteCompiledFunction(IFunction function, int timeout = 180 * 1000)
         {
-            // Invoke
-            var invoker = new CompiledFunctionInvoker(function, timeout, null);
+            //// Invoke
+            //var invoker = new CompiledFunctionInvoker(function, timeout, null);
 
-            var cancellationSource = new CancellationTokenSource();
+            //var cancellationSource = new CancellationTokenSource();
 
-            var request = WebManager.GetHttpRequest();
-            (Event _event, Context _context) = new DefaultParameterHandler(null).GetFunctionParameters(request);
+            //var request = GetHttpRequest();
+            //(Event _event, Context _context) = new DefaultParameterHandler(null).GetFunctionParameters(request);
 
-            return invoker.Execute(cancellationSource, _event, _context); 
+            //return invoker.Execute(cancellationSource, _event, _context);
+            return null;
         }
 
         private static IFunction GetCompiledFunctionWithDepedencies(string functionFileName)
         {
-            // Creates Environment
-            var environment = EnvironmentManager.CreateEnvironment(BASE_PATH, functionFileName);
+            //// Creates Environment
+            //EnvironmentManager environment = null;
 
-            var functionFile = environment.FunctionFile;
-            var projectFile = environment.ProjectFile;
-            var assemblyFile = environment.AssemblyFile;
+            //var functionFile = environment.FunctionFile;
+            //var projectFile = environment.ProjectFile;
+            //var assemblyFile = environment.AssemblyFile;
 
-            // Restore Dependencies
-            var restorer = new DependencyRestorer(environment);
-            restorer.CopyAndRestore();
+            //// Restore Dependencies
+            //var restorer = new FunctionCompiler(environment);
+            //restorer.CopyAndRestore();
 
             // Compile
             //var compiler = new DefaultCompiler(new DefaultParser(), new WithDependencyReferencesManager());
@@ -139,6 +141,5 @@ namespace Kubeless.Core.Tests
 
             return null;
         }
-
     }
 }

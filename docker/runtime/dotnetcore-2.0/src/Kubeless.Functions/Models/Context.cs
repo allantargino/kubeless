@@ -20,5 +20,7 @@ namespace Kubeless.Functions
             Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
             MemoryLimit = memoryLimit ?? throw new ArgumentNullException(nameof(memoryLimit));
         }
+
+        public Context() { }
     }
 }

@@ -18,5 +18,7 @@
             EventNamespace = eventNamespace;
             Extensions = extensions;
         }
+
+        public Event() { }
     }
 }

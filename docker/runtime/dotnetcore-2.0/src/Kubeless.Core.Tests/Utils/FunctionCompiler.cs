@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kubeless.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,14 +10,13 @@ namespace Kubeless.Core.Tests.Utils
     /// <summary>
     /// Simulates dependency restore executed in an init container by Kubeless.
     /// </summary>
-    public class DependencyRestorer
+    public class FunctionCompiler
     {
         private readonly string _projectFile;
         private readonly string _packagesPath;
         private readonly string _copiedProjectFile;
 
-
-        public DependencyRestorer(FunctionEnvironment environment)
+        public FunctionCompiler(FunctionEnvironment environment)
         {
             _projectFile = environment.ProjectFile;
             _packagesPath = environment.PackagesPath;
@@ -46,7 +46,7 @@ namespace Kubeless.Core.Tests.Utils
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "dotnet",
-                    Arguments = $"restore --packages .",
+                    Arguments = $"publish --packages . -c Release",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
@@ -64,7 +64,7 @@ namespace Kubeless.Core.Tests.Utils
                 throw new Exception("Error during nuget restore.");
         }
 
-        public void CopyAndRestore()
+        public void Compile(IFunction function)
         {
             CopyProjectFile();
             NugetRestore();
