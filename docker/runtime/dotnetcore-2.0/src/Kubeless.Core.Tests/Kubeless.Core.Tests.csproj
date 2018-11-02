@@ -18,7 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\functions\**" CopyToOutputDirectory="PreserveNewest"  />
+    <None Include="..\..\functions\**"> 
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </None>
   </ItemGroup>
 
 </Project>

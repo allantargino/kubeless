@@ -1,10 +1,10 @@
 using System;
-using Microsoft.AspNetCore.Http;
+using Kubeless.Functions;
 using Newtonsoft.Json;
 
 public class module
 {
-    public string handler(HttpRequest request)
+    public string handler(Event k8Event, Context k8Context)
     {
         var person = new Person()
         {

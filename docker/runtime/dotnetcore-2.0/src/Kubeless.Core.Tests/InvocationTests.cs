@@ -8,19 +8,22 @@ using System;
 using System.IO;
 using System.Threading;
 using Xunit;
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+//[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Kubeless.Core.Tests
 {
     public class InvocationTests
     {
-        private const string BASE_PATH = "./Functions";
+        private const string BASE_PATH = "./functions-tests";
         private const string PUBLISH_PATH = "publish/";
         private const string PACKAGES_PATH = "packages/";
 
-        [InlineData("cs", "nodependency", "module", "handler")]
+        [InlineData("fs", "helloget", "helloget", "handler")]
+        [InlineData("cs", "helloget", "helloget", "foo")]
+        [InlineData("cs", "dependency-json", "module", "handler")]
+        [InlineData("cs", "dependency-yaml", "module", "handler")]
         [Theory]
-        public void BuildWithoutDependency(string language, string functionFileName, string moduleName, string functionHandler)
+        public void InvokeGenericFunction(string language, string functionFileName, string moduleName, string functionHandler)
         {
             // Arrange
             int timeout = 180;

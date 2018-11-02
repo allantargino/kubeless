@@ -10,38 +10,34 @@ namespace Kubeless.Core.Tests.Utils
     public class FunctionFactory
     {
         private readonly string basePath;
+        private readonly FunctionCompiler compiler;
 
         public FunctionFactory(string basePath)
         {
             this.basePath = basePath;
+            this.compiler = new FunctionCompiler();
         }
 
         public IFunction CompileFunction(string language, string functionFileName, string moduleName, string functionHandler)
         {
-            var env = CreateEnvironment(basePath, language, functionFileName);
-            string publishPath = null;
+            var environmentPath = CreateEnvironmentPath(basePath, language, functionFileName);
+            var binaryPath = compiler.Compile(environmentPath);
 
-            return new CompiledFunction(moduleName, functionHandler, publishPath);
+            return new CompiledFunction(moduleName, functionHandler, binaryPath);
         }
 
-        public static FunctionEnvironment CreateEnvironment(string basePath, string language, string functionFileName)
+        public static string CreateEnvironmentPath(string basePath, string language, string functionFileName)
         {
             var environmentPath = Path.Combine(basePath, language, functionFileName);
+            CreateDirectory(environmentPath);
 
-            EnsureDirectoryIsClear(environmentPath);
-
-            var functionFiles = Directory.EnumerateFiles(basePath, $"{functionFileName}.*");
-
+            var functionFiles = Directory.EnumerateFiles(".", $"{functionFileName}.{language}*");
             CopyFunctionsFiles(functionFiles, environmentPath);
 
-            var environment = new FunctionEnvironment(environmentPath, functionFileName, 180);
-
-
-
-            return environment;
+            return environmentPath;
         }
 
-        private static void EnsureDirectoryIsClear(string directory)
+        private static void CreateDirectory(string directory)
         {
             if (Directory.Exists(directory))
                 Directory.Delete(directory, recursive: true);
@@ -50,10 +46,12 @@ namespace Kubeless.Core.Tests.Utils
 
         public static void CopyFunctionsFiles(IEnumerable<string> files, string destination)
         {
-            foreach (var f in files)
+            foreach (var file in files)
             {
-                var name = Path.GetFileName(f);
-                File.Copy(f, Path.Combine(destination, name));
+                var name = Path.GetFileNameWithoutExtension(file);
+                var extension = Path.GetExtension(file);
+                var newName = "project" + extension;
+                File.Copy(file, Path.Combine(destination, newName));
             }
         }
     }
