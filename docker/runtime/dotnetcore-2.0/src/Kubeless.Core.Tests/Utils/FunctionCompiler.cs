@@ -13,14 +13,14 @@ namespace Kubeless.Core.Tests.Utils
         {
         }
 
-        private void DotnetPublish(string functionPath, string destinationPath)
+        private void DotnetPublish(string functionPath, string referencesPath, string destinationPath)
         {
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "dotnet",
-                    Arguments = $"publish --packages . -c Release -o {destinationPath}",
+                    Arguments = $"publish --packages {referencesPath} -c Release -o {destinationPath}",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
@@ -65,12 +65,12 @@ namespace Kubeless.Core.Tests.Utils
         }
 
 
-        public string Compile(string functionPath)
+        public string Compile(string functionPath, string packagesSubPath)
         {
-            string outputPath = "output";
+            string outputPath = ".";
 
             //DotnetPublish2();
-            DotnetPublish(functionPath, outputPath);
+            DotnetPublish(functionPath, packagesSubPath, outputPath);
 
             return Path.Combine(functionPath, outputPath);
         }

@@ -15,10 +15,9 @@ namespace Kubeless.Core.Tests
     public class InvocationTests
     {
         private const string BASE_PATH = "./functions-tests";
-        private const string PUBLISH_PATH = "publish/";
-        private const string PACKAGES_PATH = "packages/";
+        private const string PACKAGES_SUBPATH = "packages/";
 
-        [InlineData("fs", "helloget", "helloget", "handler")]
+        //[InlineData( "fs", "helloget", "helloget", "handler")]
         [InlineData("cs", "helloget", "helloget", "foo")]
         [InlineData("cs", "dependency-json", "module", "handler")]
         [InlineData("cs", "dependency-yaml", "module", "handler")]
@@ -27,11 +26,12 @@ namespace Kubeless.Core.Tests
         {
             // Arrange
             int timeout = 180;
-            string packagesPath = Path.Combine(BASE_PATH, PACKAGES_PATH);
             HttpRequest request = new DefaultHttpContext().Request;
-            FunctionFactory factory = new FunctionFactory(BASE_PATH);
-            IFunction function = factory.CompileFunction(language, functionFileName, moduleName, functionHandler);
-            IInvoker invoker = new CompiledFunctionInvoker(function, timeout, packagesPath);
+            FunctionFactory factory = new FunctionFactory(BASE_PATH, PACKAGES_SUBPATH);
+            string functionPath = factory.CreateEnvironmentPath(BASE_PATH, language, functionFileName);
+            string referencesPath = Path.Combine(functionPath, PACKAGES_SUBPATH);
+            IFunction function = factory.CompileFunction(functionPath, moduleName, functionHandler);
+            IInvoker invoker = new CompiledFunctionInvoker(function, timeout, referencesPath);
             Event @event = new Event();
             Context context = new Context();
             CancellationTokenSource token = new CancellationTokenSource();
