@@ -19,6 +19,8 @@
             Extensions = extensions;
         }
 
+        public Event(object data) : this(data, "", "", "", "", null) { }
+
         public Event() { }
     }
 }

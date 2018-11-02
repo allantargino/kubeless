@@ -3,7 +3,6 @@ using Kubeless.Core.Utils;
 using Kubeless.Functions;
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;

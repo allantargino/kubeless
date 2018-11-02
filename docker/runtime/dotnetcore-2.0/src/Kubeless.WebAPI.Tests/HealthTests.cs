@@ -25,7 +25,7 @@ namespace Kubeless.WebAPI.Tests
             Environment.SetEnvironmentVariable("FunctionAssemblyPath", "../../../../../functions/");
 
             var _server = new TestServer(Program.CreateWebHostBuilder());
-            
+
 
 
             var client = _server.CreateClient();

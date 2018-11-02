@@ -34,42 +34,14 @@ namespace Kubeless.Core.Tests.Utils
 
             process.WaitForExit();
 
-            if (process.ExitCode!=0 || result.ToLower().Contains("error"))
-                throw new Exception("Error during dotnet publish");
-        }
-
-
-        private void DotnetPublish2()
-        {
-            var process = new Process()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "bash",
-                    Arguments = $"./compile-function.sh .",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WorkingDirectory = "."
-                }
-            };
-
-            process.Start();
-
-            string result = process.StandardOutput.ReadToEnd();
-
-            process.WaitForExit();
-
             if (process.ExitCode != 0 || result.ToLower().Contains("error"))
                 throw new Exception("Error during dotnet publish");
         }
-
 
         public string Compile(string functionPath, string packagesSubPath)
         {
             string outputPath = ".";
 
-            //DotnetPublish2();
             DotnetPublish(functionPath, packagesSubPath, outputPath);
 
             return Path.Combine(functionPath, outputPath);
