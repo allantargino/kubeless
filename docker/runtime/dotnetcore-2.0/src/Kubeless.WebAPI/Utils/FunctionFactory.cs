@@ -8,8 +8,8 @@ namespace Kubeless.WebAPI.Utils
     public class FunctionFactory
     {
         private static readonly string BASE_PATH = VariablesUtils.GetEnvVar("BASE_PATH", "/kubeless/");
-        private static readonly string PUBLISH_PATH = "publish/";
-        private static readonly string PACKAGES_PATH = "packages/";
+        private static readonly string PUBLISH_PATH = VariablesUtils.GetEnvVar("PUBLISH_PATH", "publish/");
+        private static readonly string PACKAGES_PATH = VariablesUtils.GetEnvVar("PACKAGES_PATH", "packages/");
 
         public static IFunction GetFunction(IConfiguration configuration)
         {

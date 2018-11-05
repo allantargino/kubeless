@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -16,6 +15,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Kubeless.Core.Tests\Kubeless.Core.Tests.csproj" />
     <ProjectReference Include="..\Kubeless.WebAPI\Kubeless.WebAPI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\functions\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </None>
   </ItemGroup>
 
 </Project>

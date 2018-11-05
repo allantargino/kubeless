@@ -18,8 +18,9 @@ namespace Kubeless.Core.Tests.Utils
         {
             FunctionFactory factory = new FunctionFactory(BASE_PATH, PACKAGES_SUBPATH);
             string functionPath = factory.CreateEnvironmentPath(BASE_PATH, language, functionFileName);
-            string referencesPath = Path.Combine(functionPath, PACKAGES_SUBPATH);
             IFunction function = factory.CompileFunction(functionPath, moduleName, functionHandler);
+
+            string referencesPath = Path.Combine(functionPath, PACKAGES_SUBPATH);
             IInvoker invoker = new CompiledFunctionInvoker(function, timeout, referencesPath);
 
             return invoker;
