@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kubeless.Core.Tests
 {
-    class ReferencesTests
+    public class ReferencesTests
     {
     }
 }

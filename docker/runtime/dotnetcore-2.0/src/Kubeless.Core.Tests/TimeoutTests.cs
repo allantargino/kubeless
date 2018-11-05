@@ -9,18 +9,18 @@ namespace Kubeless.Core.Tests
 {
     public class TimeoutTests
     {
-        [InlineData("cs", "timeout", "module", "handler", 1)]
-        [InlineData("cs", "timeout", "module", "handler", 2)]
-        [InlineData("cs", "timeout", "module", "handler", 3)]
-        [InlineData("cs", "timeout", "module", "handler", 4)]
-        [InlineData("cs", "timeout", "module", "handler", 5)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 1)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 2)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 3)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 4)]
         [Theory]
-        public void RunWithTimeout(string language, string functionFileName, string moduleName, string functionHandler, int timeoutSeconds)
+        public void RunWithExecutionTimeGreaterThanTimeout(string language, string functionFileName, string moduleName, string functionHandler, int durationTime, int timeoutSeconds)
         {
             // Arrange
+            int sleepTime = durationTime * 1000;
             int timeout = timeoutSeconds * 1000;
             IInvoker invoker = InvokerFactory.GetFunctionInvoker(language, functionFileName, moduleName, functionHandler, timeout);
-            Event @event = new Event();
+            Event @event = new Event(sleepTime);
             Context context = new Context();
             CancellationTokenSource token = new CancellationTokenSource();
 
@@ -34,18 +34,20 @@ namespace Kubeless.Core.Tests
             Assert.Throws<OperationCanceledException>(timeoutAction);
         }
 
-        [InlineData("cs", "timeout", "module", "handler", 6)]
-        [InlineData("cs", "timeout", "module", "handler", 7)]
-        [InlineData("cs", "timeout", "module", "handler", 8)]
-        [InlineData("cs", "timeout", "module", "handler", 9)]
-        [InlineData("cs", "timeout", "module", "handler", 10)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 5)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 6)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 7)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 8)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 9)]
+        [InlineData("cs", "timeout", "module", "handler", 5, 10)]
         [Theory]
-        public void RunWithoutTimeout(string language, string functionFileName, string moduleName, string functionHandler, int timeoutSeconds)
+        public void RunWithoutTimeout(string language, string functionFileName, string moduleName, string functionHandler, int durationTime, int timeoutSeconds)
         {
             // Arrange
+            int sleepTime = durationTime * 1000;
             int timeout = timeoutSeconds * 1000;
             IInvoker invoker = InvokerFactory.GetFunctionInvoker(language, functionFileName, moduleName, functionHandler, timeout);
-            Event @event = new Event();
+            Event @event = new Event(sleepTime);
             Context context = new Context();
             CancellationTokenSource token = new CancellationTokenSource();
 
